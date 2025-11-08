@@ -5,7 +5,7 @@ export default function Hero({ onNavigate }) {
     <section className="relative overflow-hidden bg-white text-black dark:bg-black dark:text-white">
       {/* Spline cover */}
       <div className="relative h-[420px] sm:h-[520px] lg:h-[620px]">
-        <Spline scene="https://prod.spline.design/zhZFnwyOYLgqlLWk/scene.splinecode" style={{ width: '100%', height: '100%' }} />
+        <Spline scene="https://prod.spline.design/O-AdlP9lTPNz-i8a/scene.splinecode" style={{ width: '100%', height: '100%' }} />
         {/* soft vignette to keep focus on headline */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-white/70 dark:from-black/40 dark:via-transparent dark:to-black/70" />
       </div>
