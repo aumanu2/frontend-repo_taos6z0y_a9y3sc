@@ -3,7 +3,9 @@
 > vite
 
 
-  VITE v5.4.20  ready in 422 ms
+  VITE v5.4.20  ready in 478 ms
 
   ➜  Local:   http://localhost:3000/
   ➜  Network: http://172.20.6.176:3000/
+The file does not exist at "/home/workspace/node_modules/.vite/deps/react-dom_client.js?v=b6fa7694" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+The file does not exist at "/home/workspace/node_modules/.vite/deps/react-router-dom.js?v=4ffa8b7f" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.

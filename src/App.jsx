@@ -1,64 +1,63 @@
-import { useMemo, useState } from 'react';
+import { ThemeProvider, useTheme } from 'next-themes';
 import Hero from './components/Hero';
 import Features from './components/Features';
 import Frameworks from './components/Frameworks';
 import Footer from './components/Footer';
 import Dashboard from './components/Dashboard';
 import Signup from './components/Signup';
+import { useEffect, useState } from 'react';
 
 export default function App() {
   const [route, setRoute] = useState('/');
-  const theme = useMemo(() => {
-    // simple prefers-color-scheme detection for demo
-    if (typeof window !== 'undefined') {
-      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
-    return 'light';
-  }, []);
 
   const handleNavigate = (path) => {
     setRoute(path);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   const Root = (
-    <div className={theme === 'dark' ? 'dark' : ''}>
-      <div className="min-h-screen bg-white text-black dark:bg-black dark:text-white">
-        <Header onNavigate={handleNavigate} />
-        <Hero onNavigate={handleNavigate} />
-        <Features />
-        <Frameworks />
-        <TestimonialsPlaceholder />
-        <Footer />
-      </div>
+    <div className="min-h-screen bg-white text-black dark:bg-black dark:text-white">
+      <Header onNavigate={handleNavigate} />
+      <Hero onNavigate={handleNavigate} />
+      <Features />
+      <Frameworks />
+      <TestimonialsPlaceholder />
+      <Footer />
     </div>
   );
 
   const SignupPage = (
-    <div className={theme === 'dark' ? 'dark' : ''}>
-      <div className="min-h-screen bg-white text-black dark:bg-black dark:text-white">
-        <Header onNavigate={handleNavigate} />
-        <Signup />
-        <Footer />
-      </div>
+    <div className="min-h-screen bg-white text-black dark:bg-black dark:text-white">
+      <Header onNavigate={handleNavigate} />
+      <Signup />
+      <Footer />
     </div>
   );
 
   const DashboardPage = (
-    <div className={theme === 'dark' ? 'dark' : ''}>
-      <div className="min-h-screen bg-white text-black dark:bg-black dark:text-white">
-        <Header onNavigate={handleNavigate} />
-        <Dashboard />
-      </div>
+    <div className="min-h-screen bg-white text-black dark:bg-black dark:text-white">
+      <Header onNavigate={handleNavigate} />
+      <Dashboard />
     </div>
   );
 
-  if (route === '/dashboard') return DashboardPage;
-  if (route === '/signup') return SignupPage;
-  return Root;
+  return (
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      {route === '/dashboard' ? DashboardPage : route === '/signup' ? SignupPage : Root}
+    </ThemeProvider>
+  );
 }
 
 function Header({ onNavigate }) {
+  const { theme, setTheme, systemTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  const current = theme === 'system' ? systemTheme : theme;
+  const isDark = current === 'dark';
+
   return (
     <header className="sticky top-0 z-10 bg-white/70 backdrop-blur border-b text-black dark:bg-black/60 dark:text-white" style={{ borderColor: 'rgba(163, 230, 53, 0.6)', borderStyle: 'solid', borderWidth: '0 0 1px 0' }}>
       <div className="mx-auto max-w-7xl px-6 h-14 flex items-center justify-between">
@@ -71,6 +70,31 @@ function Header({ onNavigate }) {
           <button onClick={() => onNavigate('/dashboard')} className="hover:opacity-100">Dashboard</button>
         </nav>
         <div className="flex items-center gap-2">
+          {mounted && (
+            <div className="flex items-center rounded-xl border px-1 py-1" style={{ borderColor: 'rgba(163, 230, 53, 0.8)' }}>
+              <button
+                aria-label="Light mode"
+                onClick={() => setTheme('light')}
+                className={`rounded-lg px-2 py-1 text-xs ${!isDark ? 'bg-black text-white dark:bg-white dark:text-black' : ''}`}
+              >
+                Light
+              </button>
+              <button
+                aria-label="Dark mode"
+                onClick={() => setTheme('dark')}
+                className={`rounded-lg px-2 py-1 text-xs ${isDark ? 'bg-black text-white dark:bg-white dark:text-black' : ''}`}
+              >
+                Dark
+              </button>
+              <button
+                aria-label="System theme"
+                onClick={() => setTheme('system')}
+                className={`rounded-lg px-2 py-1 text-xs ${(theme === 'system') ? 'bg-black text-white dark:bg-white dark:text-black' : ''}`}
+              >
+                Auto
+              </button>
+            </div>
+          )}
           <button onClick={() => onNavigate('/signup')} className="rounded-xl px-3 py-1.5 text-sm border hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black" style={{ borderColor: 'rgba(163, 230, 53, 0.8)' }}>Sign in</button>
           <button onClick={() => onNavigate('/signup')} className="rounded-xl px-3 py-1.5 text-sm font-medium bg-black text-white border hover:opacity-90 dark:bg-white dark:text-black" style={{ borderColor: 'rgba(163, 230, 53, 0.9)' }}>Get Started</button>
         </div>
