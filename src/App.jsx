@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Hero from './components/Hero';
 import Features from './components/Features';
 import Frameworks from './components/Frameworks';
@@ -8,60 +8,71 @@ import Signup from './components/Signup';
 
 export default function App() {
   const [route, setRoute] = useState('/');
+  const theme = useMemo(() => {
+    // simple prefers-color-scheme detection for demo
+    if (typeof window !== 'undefined') {
+      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    return 'light';
+  }, []);
 
   const handleNavigate = (path) => {
-    // UI-only routing for preview (no auth/session logic here)
     setRoute(path);
-    // Scroll to top on navigation
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  if (route === '/dashboard') {
-    return (
-      <div className="min-h-screen bg-gray-950">
+  const Root = (
+    <div className={theme === 'dark' ? 'dark' : ''}>
+      <div className="min-h-screen bg-white text-black dark:bg-black dark:text-white">
         <Header onNavigate={handleNavigate} />
-        <Dashboard />
+        <Hero onNavigate={handleNavigate} />
+        <Features />
+        <Frameworks />
+        <TestimonialsPlaceholder />
+        <Footer />
       </div>
-    );
-  }
+    </div>
+  );
 
-  if (route === '/signup') {
-    return (
-      <div className="min-h-screen bg-gray-950">
+  const SignupPage = (
+    <div className={theme === 'dark' ? 'dark' : ''}>
+      <div className="min-h-screen bg-white text-black dark:bg-black dark:text-white">
         <Header onNavigate={handleNavigate} />
         <Signup />
         <Footer />
       </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-gray-950 text-white">
-      <Header onNavigate={handleNavigate} />
-      <Hero onNavigate={handleNavigate} />
-      <Features />
-      <Frameworks />
-      <TestimonialsPlaceholder />
-      <Footer />
     </div>
   );
+
+  const DashboardPage = (
+    <div className={theme === 'dark' ? 'dark' : ''}>
+      <div className="min-h-screen bg-white text-black dark:bg-black dark:text-white">
+        <Header onNavigate={handleNavigate} />
+        <Dashboard />
+      </div>
+    </div>
+  );
+
+  if (route === '/dashboard') return DashboardPage;
+  if (route === '/signup') return SignupPage;
+  return Root;
 }
 
 function Header({ onNavigate }) {
   return (
-    <header className="sticky top-0 z-10 border-b border-white/10 bg-black/40 backdrop-blur">
+    <header className="sticky top-0 z-10 bg-white/70 backdrop-blur border-b text-black dark:bg-black/60 dark:text-white" style={{ borderColor: 'rgba(163, 230, 53, 0.6)', borderStyle: 'solid', borderWidth: '0 0 1px 0' }}>
       <div className="mx-auto max-w-7xl px-6 h-14 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="h-6 w-6 rounded-md bg-gradient-to-br from-fuchsia-500 to-indigo-500" />
-          <button onClick={() => onNavigate('/')} className="text-white font-semibold tracking-tight">VibeCode</button>
+          <div className="h-6 w-6 rounded-md" style={{ background: 'linear-gradient(135deg,#fff,#fff)', border: '1px solid rgba(163,230,53,0.9)' }} />
+          <button onClick={() => onNavigate('/')} className="font-semibold tracking-tight">VibeCode</button>
         </div>
-        <nav className="hidden sm:flex items-center gap-6 text-sm text-white/70">
-          <button onClick={() => onNavigate('/')} className="hover:text-white">Home</button>
-          <button onClick={() => onNavigate('/dashboard')} className="hover:text-white">Dashboard</button>
+        <nav className="hidden sm:flex items-center gap-6 text-sm opacity-80">
+          <button onClick={() => onNavigate('/')} className="hover:opacity-100">Home</button>
+          <button onClick={() => onNavigate('/dashboard')} className="hover:opacity-100">Dashboard</button>
         </nav>
         <div className="flex items-center gap-2">
-          <button onClick={() => onNavigate('/signup')} className="rounded-xl px-3 py-1.5 text-sm text-white/80 hover:text-white border border-white/10 bg-white/5">Sign in</button>
-          <button onClick={() => onNavigate('/signup')} className="rounded-xl bg-gradient-to-r from-fuchsia-500 to-indigo-500 px-3 py-1.5 text-sm font-medium text-white hover:opacity-95">Get Started</button>
+          <button onClick={() => onNavigate('/signup')} className="rounded-xl px-3 py-1.5 text-sm border hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black" style={{ borderColor: 'rgba(163, 230, 53, 0.8)' }}>Sign in</button>
+          <button onClick={() => onNavigate('/signup')} className="rounded-xl px-3 py-1.5 text-sm font-medium bg-black text-white border hover:opacity-90 dark:bg-white dark:text-black" style={{ borderColor: 'rgba(163, 230, 53, 0.9)' }}>Get Started</button>
         </div>
       </div>
     </header>
@@ -70,9 +81,9 @@ function Header({ onNavigate }) {
 
 function TestimonialsPlaceholder() {
   return (
-    <section className="relative border-t border-white/10 bg-black">
+    <section className="relative bg-white text-black dark:bg-black dark:text-white">
       <div className="mx-auto max-w-7xl px-6 py-16">
-        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-10 text-center text-white/70">
+        <div className="rounded-xl p-10 text-center opacity-80" style={{ border: '1px solid rgba(163,230,53,0.8)' }}>
           <p className="text-lg">Testimonials coming soon</p>
         </div>
       </div>
